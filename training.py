@@ -124,7 +124,10 @@ def training(params):
     C, G = utils.get_model(
         model_name=params.model_name, args=args, latent=params.latent
     )  # load classifier C and generator G
+    from torchinfo import summary
 
+    summary(G, input_size=[(128, 150, 3), (128, 150, 3)])
+    summary(C, input_size=(128, 150, 3))
     # log model gradients
     if params.log_wandb:
         wandb.watch(G, log_freq=1000)
