@@ -29,6 +29,8 @@ print("device: ", device)
 
 
 def training(params):
+    print(f"PARAMS:  {params.excl_sum}")
+    print(f"PARAMS2:  {params.log_comet}")
 
     ## a few additional parameters
     pt_log_scaling = False
@@ -69,6 +71,12 @@ def training(params):
             + str(params.equiv_layers_generator)
             + "_l"
             + str(params.latent)
+            + "_es"
+            + str(params.excl_sum)
+            + "_c"
+            + str(params.concat)
+            + "_"
+            + str(params.model_name)
             + "_"
             + str(params.rand)
         )
@@ -101,6 +109,11 @@ def training(params):
     ##################################################
 
     # define model, loss
+    def string_to_bool(string):
+        if string == "False":
+            return False
+        else:
+            return True
 
     ## arguments for network
     args = {
@@ -111,6 +124,8 @@ def training(params):
         "equiv_layers_generator": params.equiv_layers_generator,
         "equiv_layers_discriminator": params.equiv_layers_discriminator,
         "return_latent_space": False,
+        "excl_sum": string_to_bool(params.excl_sum),
+        "concat": string_to_bool(params.concat),
     }
 
     print("params:")
@@ -126,8 +141,8 @@ def training(params):
     )  # load classifier C and generator G
     from torchinfo import summary
 
-    summary(G, input_size=[(128, 150, 3), (128, 150, 3)])
-    summary(C, input_size=(128, 150, 3))
+    summary(G, input_size=[(256, 150, 3), (256, 150, 3)])
+    summary(C, input_size=(256, 150, 3))
     # log model gradients
     if params.log_wandb:
         wandb.watch(G, log_freq=1000)

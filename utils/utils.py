@@ -889,7 +889,7 @@ def plot_overview(
     return fig
 
 
-def get_epic_model(model_name, args, latent=10, only_generator=False):
+def get_model(model_name, args, latent=10, only_generator=False):
 
     if model_name == "EPiC_GAN":
         if not only_generator:
@@ -901,18 +901,7 @@ def get_epic_model(model_name, args, latent=10, only_generator=False):
             sys.exit("ERROR: no local model latent=0 implemented")
         else:
             G = models.EPiC_generator(args).to(device)  # generator
-    else:
-        sys.exit("ERROR: model unknown")
-
-    if only_generator:
-        return G
-    else:
-        return C, G
-
-
-def get_model(model_name, args, latent=10, only_generator=False):
-
-    if model_name == "EPiC_GAN":
+    elif model_name == "EPiC_GAN_DS":
         if not only_generator:
             C = models.DeepSet_discriminator(args).to(
                 device

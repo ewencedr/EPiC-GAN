@@ -78,7 +78,8 @@ def main():
     params.latent_local = 3
     params.feats = 3
     params.norm_sigma = 5
-    params.model_name = "EPiC_GAN"
+    params.model_name = "EPiC_GAN_DS"
+    params.excl_sum = "False"
 
     ##############################
 
@@ -95,6 +96,8 @@ def main():
         "equiv_layers_generator": params.equiv_layers_generator,
         "equiv_layers_discriminator": params.equiv_layers_discrmiminator,
         "return_latent_space": False,
+        "excl_sum": True,
+        "concat": True,
     }
     print(f"Model to load: {params.model_name_to_load}")
     G = utils.get_model(
@@ -141,7 +144,7 @@ def load_model(
     G, model_name_to_load, params, folder="/beegfs/desy/user/ewencedr/epic_gan/"
 ):
     # path = folder + "EPiC_" + params.dataset_type + "_" + str(params.n_points) + ".tar"
-    path = f"{folder}/{model_name_to_load}"
+    path = f"{folder}{model_name_to_load}"
     checkpoint = torch.load(path)
     G.load_state_dict(checkpoint["decoder_state"], strict=True)
     G.eval()

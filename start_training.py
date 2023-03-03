@@ -146,6 +146,8 @@ parser.add_argument(
 parser.add_argument(
     "--log_comet", default=False, type=bool, help="enable comet logging"
 )
+parser.add_argument("--excl_sum", default="True", help="excl sum")
+parser.add_argument("--concat", default="False", help="concat")
 parser.add_argument(
     "--save_interval",
     default=1000,
@@ -161,6 +163,8 @@ rand = random.randint(11111, 99999)
 parser.add_argument(
     "--rand", default=rand, type=int, help="assign random number to run"
 )
+
+
 # read parser into class
 params = parser.parse_args()
 
