@@ -266,7 +266,7 @@ class DeepSet_generator(nn.Module):
         self.excl_sum = args["excl_sum"]
         self.concat = args["concat"]
 
-        self.local_0 = weight_norm(nn.Linear(self.latent_local, self.hid_d))
+        # self.local_0 = weight_norm(nn.Linear(self.latent_local, self.hid_d))
         self.global_0 = weight_norm(nn.Linear(self.latent, self.hid_d))
         self.global_1 = weight_norm(nn.Linear(self.hid_d, self.latent))
 
@@ -274,21 +274,21 @@ class DeepSet_generator(nn.Module):
         for _ in range(self.equiv_layers):
             self.nn_list.append(
                 DeepSet_layer(
-                    self.hid_d,
-                    self.hid_d,
+                    self.feats,
+                    self.feats,
                     self.latent,
                     self.excl_sum,
                     concat=self.concat,
                 )
             )
 
-        self.local_1 = weight_norm(nn.Linear(self.hid_d, self.feats))
+        # self.local_1 = weight_norm(nn.Linear(self.hid_d, self.feats))
 
     def forward(self, z_global, z_local):  # shape: [batch, points, feats]
         batch_size, _, _ = z_local.size()
         latent_tensor = z_global.clone().reshape(batch_size, 1, -1)
 
-        z_local = F.leaky_relu(self.local_0(z_local))
+        # z_local = F.leaky_relu(self.local_0(z_local))
 
         # z_global = F.leaky_relu(self.global_0(z_global))
         # z_global = F.leaky_relu(self.global_1(z_global))
@@ -312,7 +312,8 @@ class DeepSet_generator(nn.Module):
             )
 
         # final local NN to get down to input feats size
-        out = self.local_1(z_local)
+        # out = self.local_1(z_local)
+        out = z_local
 
         if self.return_latent_space:
             return out, latent_tensor
@@ -389,8 +390,8 @@ class DeepSet_discriminator(nn.Module):
         self.excl_sum = args["excl_sum"]
         self.concat = args["concat"]
 
-        self.fc_l1 = weight_norm(nn.Linear(self.feats, self.hid_d))
-        self.fc_l2 = weight_norm(nn.Linear(self.hid_d, self.hid_d))
+        # self.fc_l1 = weight_norm(nn.Linear(self.feats, self.hid_d))
+        # self.fc_l2 = weight_norm(nn.Linear(self.hid_d, self.hid_d))
 
         # self.fc_g1 = weight_norm(nn.Linear(int(2 * self.hid_d), self.hid_d))
         # self.fc_g2 = weight_norm(nn.Linear(self.hid_d, self.latent))
@@ -399,26 +400,26 @@ class DeepSet_discriminator(nn.Module):
         for _ in range(self.equiv_layers):
             self.nn_list.append(
                 DeepSet_layer(
-                    self.hid_d,
-                    self.hid_d,
+                    self.feats,
+                    self.feats,
                     self.latent,
                     self.excl_sum,
                     concat=self.concat,
                 )
             )
 
-        self.fc_g3 = weight_norm(nn.Linear(int(2 * self.hid_d), self.hid_d))
+        self.fc_g3 = weight_norm(nn.Linear(int(2 * self.feats), self.hid_d))
         self.fc_g4 = weight_norm(nn.Linear(self.hid_d, self.hid_d))
         self.fc_g5 = weight_norm(nn.Linear(self.hid_d, 1))
 
     def forward(self, x):  # (B,P,F)
         # local encoding
-        x_local = F.leaky_relu(self.fc_l1(x))
-        x_local = F.leaky_relu(self.fc_l2(x_local) + x_local)  # (B,P,hid_d)
-
+        # x_local = F.leaky_relu(self.fc_l1(x))
+        # x_local = F.leaky_relu(self.fc_l2(x_local) + x_local)  # (B,P,hid_d)
+        x_local = x.clone()
         # global features
-        x_mean = x_local.mean(1, keepdim=False)  # mean over points dim. # (B,P)
-        x_sum = x_local.sum(1, keepdim=False)  # mean over points dim. # (B,P)
+        # x_mean = x_local.mean(1, keepdim=False)  # mean over points dim. # (B,P)
+        # x_sum = x_local.sum(1, keepdim=False)  # mean over points dim. # (B,P)
         x_global = x  # (B,P,F)
         # torch.cat([x_mean, x_sum], 1)
         # x_global = F.leaky_relu(self.fc_g1(x_global))
