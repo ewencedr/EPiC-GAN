@@ -124,24 +124,35 @@ class DeepSet_layer(nn.Module):
         self.in_dim = in_dim
         self.concat = concat
 
-        self.set_emb = st.net.MLP(in_dim, [hid_dim, hid_dim], latent_dim)
+        self.set_emb = st.net.MLP(
+            in_dim, [hid_dim, hid_dim], latent_dim, activation="LeakyReLU"
+        )
         if self.excl_sum:
             self.pooling_mlp = st.net.MLP(
-                latent_dim * 3, [hid_dim, hid_dim], latent_dim
+                latent_dim * 3, [hid_dim, hid_dim], latent_dim, activation="LeakyReLU"
             )
         else:
-            self.pooling_mlp = st.net.MLP(latent_dim * 2, [hid_dim, hid_dim], in_dim)
+            self.pooling_mlp = st.net.MLP(
+                latent_dim * 2, [hid_dim, hid_dim], in_dim, activation="LeakyReLU"
+            )
         if excl_sum:
             self.made = st.net.MADE(
                 in_dim, [hid_dim, hid_dim], latent_dim * in_dim, return_per_dim=True
             )
-            self.mlp = st.net.MLP(latent_dim * in_dim, [hid_dim, hid_dim], in_dim)
+            self.mlp = st.net.MLP(
+                latent_dim * in_dim, [hid_dim, hid_dim], in_dim, activation="LeakyReLU"
+            )
             if self.concat:
                 self.concat_mlp = st.net.MLP(
-                    latent_dim * in_dim * 2, [hid_dim, hid_dim], in_dim
+                    latent_dim * in_dim * 2,
+                    [hid_dim, hid_dim],
+                    in_dim,
+                    activation="LeakyReLU",
                 )
         else:
-            self.non_excl_sum = st.net.MLP(in_dim * 2, [hid_dim, hid_dim], in_dim)
+            self.non_excl_sum = st.net.MLP(
+                in_dim * 2, [hid_dim, hid_dim], in_dim, activation="LeakyReLU"
+            )
 
         # in_dim: 128
         # hid_dim: 128
