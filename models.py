@@ -275,7 +275,7 @@ class DeepSet_generator(nn.Module):
             self.nn_list.append(
                 DeepSet_layer(
                     self.feats,
-                    self.feats,
+                    self.hid_d,
                     self.latent,
                     self.excl_sum,
                     concat=self.concat,
@@ -401,7 +401,7 @@ class DeepSet_discriminator(nn.Module):
             self.nn_list.append(
                 DeepSet_layer(
                     self.feats,
-                    self.feats,
+                    self.hid_d,
                     self.latent,
                     self.excl_sum,
                     concat=self.concat,
